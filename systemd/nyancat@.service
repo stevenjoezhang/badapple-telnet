@@ -1,0 +1,11 @@
+[Unit]
+Description=badapple
+
+[Service]
+User=nobody
+ExecStart=-/usr/bin/badapple -t
+StandardInput=socket
+StandardOutput=socket
+
+[Install]
+WantedBy=multi-user.target
