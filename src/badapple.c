@@ -334,9 +334,7 @@ void usage(char * argv[]) {
 
 int main(int argc, char ** argv) {
 
-	char *term = NULL;
 	unsigned int k;
-	int ttype;
 	uint32_t option = 0, done = 0, sb_mode = 0;
 	/* Various pieces for the telnet communication */
 	unsigned char  sb[1024] = {0};
@@ -459,7 +457,6 @@ int main(int argc, char ** argv) {
 								/* This was a response to the TTYPE command, meaning
 								 * that this should be a terminal type */
 								alarm(2);
-								term = strndup((char *)&sb[2], sizeof(sb)-2);
 								done++;
 							}
 							else if (sb[0] == NAWS) {
@@ -535,50 +532,11 @@ int main(int argc, char ** argv) {
 		}
 		alarm(0);
 	} else {
-		/* We are running standalone, retrieve the
-		 * terminal type from the environment. */
-		term = getenv("TERM");
-
-		/* Also get the number of columns */
+		/* Get the number of columns */
 		struct winsize w;
 		ioctl(0, TIOCGWINSZ, &w);
 		terminal_width = w.ws_col;
 		terminal_height = w.ws_row;
-	}
-
-	/* Default ttype */
-	ttype = 2;
-
-	if (term) {
-		/* Convert the entire terminal string to lower case */
-		for (k = 0; k < strlen(term); ++k) {
-			term[k] = tolower(term[k]);
-		}
-
-		/* Do our terminal detection */
-		if (strstr(term, "xterm")) {
-			ttype = 1; /* 256-color, spaces */
-		} else if (strstr(term, "toaru")) {
-			ttype = 1; /* emulates xterm */
-		} else if (strstr(term, "linux")) {
-			ttype = 3; /* Spaces and blink attribute */
-		} else if (strstr(term, "vtnt")) {
-			ttype = 5; /* Extended ASCII fallback == Windows */
-		} else if (strstr(term, "cygwin")) {
-			ttype = 5; /* Extended ASCII fallback == Windows */
-		} else if (strstr(term, "vt220")) {
-			ttype = 6; /* No color support */
-		} else if (strstr(term, "fallback")) {
-			ttype = 4; /* Unicode fallback */
-		} else if (strstr(term, "rxvt-256color")) {
-			ttype = 1; /* xterm 256-color compatible */
-		} else if (strstr(term, "rxvt")) {
-			ttype = 3; /* Accepts LINUX mode */
-		} else if (strstr(term, "vt100") && terminal_width == 40) {
-			ttype = 7; /* No color support, only 40 columns */
-		} else if (!strncmp(term, "st", 2)) {
-			ttype = 1; /* suckless simple terminal is xterm-256color-compatible */
-		}
 	}
 
 	/* Accept ^C -> restore cursor */
