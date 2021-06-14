@@ -22,7 +22,7 @@ We recommend `openbsd-inetd`, but both `xinetd` and `systemd` work as well. You 
 
 The data of the Bad Apple!! animation is from [BadAppleStringAnimation](https://github.com/kisekied/BadAppleStringAnimation).
 
-This repo is forked from nyancat. More infomation:  
+This repo is forked from nyancat. More information:  
 http://nyancat.dakko.us  
 http://github.com/klange/nyancat
 
